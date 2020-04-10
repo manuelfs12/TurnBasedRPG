@@ -1,5 +1,6 @@
 package;
 
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.tile.FlxTilemap;
@@ -11,6 +12,7 @@ class PlayState extends FlxState {
 	var player:Player;
 	var map:FlxOgmo3Loader;
 	var walls:FlxTilemap;
+	var coins:FlxTypedGroup<Coin>;
 
 	override public function create() {
 		map = new FlxOgmo3Loader(AssetPaths.turnBasedRPG__ogmo, AssetPaths.room_001__json);
@@ -19,6 +21,8 @@ class PlayState extends FlxState {
 		walls.setTileProperties(1, FlxObject.NONE);
 		walls.setTileProperties(2, FlxObject.ANY);
 		add(walls);
+		coins = new FlxTypedGroup<Coin>();
+		add(coins);
 		player = new Player();
 		map.loadEntities(placeEntities, "entities");
 		add(player);
@@ -29,11 +33,20 @@ class PlayState extends FlxState {
 	function placeEntities(entity:EntityData) {
 		if (entity.name == "player") {
 			player.setPosition(entity.x, entity.y);
+		} else if (entity.name == "coin") {
+			coins.add(new Coin(entity.x + 4, entity.y + 4));
 		}
 	}
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 		FlxG.collide(player, walls);
+		FlxG.overlap(player, coins, playerTouchCoin);
+	}
+
+	function playerTouchCoin(player:Player, coin:Coin) {
+		if (player.alive && player.exists && coin.alive && coin.exists) {
+			coin.kill();
+		}
 	}
 }
