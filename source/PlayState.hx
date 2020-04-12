@@ -7,6 +7,8 @@ import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmo3Loader;
 import flixel.FlxState;
 
+using flixel.util.FlxSpriteUtil;
+
 class PlayState extends FlxState {
 	var player:Player;
 	var map:FlxOgmo3Loader;
@@ -16,6 +18,8 @@ class PlayState extends FlxState {
 	var hud:HUD;
 	var money:Int = 0;
 	var health:Int = 3;
+	var inCombat:Bool = false;
+	var combatHud:CombatHUD;
 
 	override public function create() {
 		map = new FlxOgmo3Loader(AssetPaths.turnBasedRPG__ogmo, AssetPaths.room_001__json);
@@ -34,6 +38,8 @@ class PlayState extends FlxState {
 		FlxG.camera.follow(player, TOPDOWN, 1);
 		hud = new HUD();
 		add(hud);
+		combatHud = new CombatHUD();
+		add(combatHud);
 		super.create();
 	}
 
@@ -58,10 +64,27 @@ class PlayState extends FlxState {
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
-		FlxG.collide(player, walls);
-		FlxG.overlap(player, coins, playerTouchCoin);
-		FlxG.collide(enemies, walls);
-		enemies.forEachAlive(checkEnemyVision);
+
+		if (inCombat) {
+			if (!combatHud.visible) {
+				health = combatHud.playerHealth;
+				hud.updateHUD(health, money);
+				if (combatHud.outcome == VICTORY) {
+					combatHud.enemy.kill();
+				} else {
+					combatHud.enemy.flicker();
+				}
+				inCombat = false;
+				player.active = true;
+				enemies.active = true;
+			}
+		} else {
+			FlxG.collide(player, walls);
+			FlxG.overlap(player, coins, playerTouchCoin);
+			FlxG.collide(enemies, walls);
+			enemies.forEachAlive(checkEnemyVision);
+			FlxG.overlap(player, enemies, playerTouchEnemy);
+		}
 	}
 
 	function playerTouchCoin(player:Player, coin:Coin) {
@@ -79,5 +102,18 @@ class PlayState extends FlxState {
 		} else {
 			enemy.seesPlayer = false;
 		}
+	}
+
+	function playerTouchEnemy(player:Player, enemy:Enemy) {
+		if (player.alive && player.exists && enemy.alive && enemy.exists && !enemy.isFlickering()) {
+			startCombat(enemy);
+		}
+	}
+
+	function startCombat(enemy:Enemy) {
+		inCombat = true;
+		player.active = false;
+		enemies.active = false;
+		combatHud.initCombat(health, enemy);
 	}
 }
