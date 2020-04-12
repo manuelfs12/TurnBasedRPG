@@ -13,6 +13,9 @@ class PlayState extends FlxState {
 	var walls:FlxTilemap;
 	var coins:FlxTypedGroup<Coin>;
 	var enemies:FlxTypedGroup<Enemy>;
+	var hud:HUD;
+	var money:Int = 0;
+	var health:Int = 3;
 
 	override public function create() {
 		map = new FlxOgmo3Loader(AssetPaths.turnBasedRPG__ogmo, AssetPaths.room_001__json);
@@ -29,6 +32,8 @@ class PlayState extends FlxState {
 		map.loadEntities(placeEntities, "entities");
 		add(player);
 		FlxG.camera.follow(player, TOPDOWN, 1);
+		hud = new HUD();
+		add(hud);
 		super.create();
 	}
 
@@ -62,6 +67,8 @@ class PlayState extends FlxState {
 	function playerTouchCoin(player:Player, coin:Coin) {
 		if (player.alive && player.exists && coin.alive && coin.exists) {
 			coin.kill();
+			money++;
+			hud.updateHUD(health, money);
 		}
 	}
 
