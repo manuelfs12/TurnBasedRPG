@@ -63,7 +63,7 @@ class OptionsState extends FlxState {
 		add(volumeAmountText);
 
 		#if desktop
-		fullscreenButton = new FlxButton(0, volumeBar.y + volumeBar.height + 8, FlxG.fullscreen ? "FULLSCREEN" : "WINDOWED", clickFullscreen);
+		fullscreenButton = new FlxButton(0, volumeBar.y + volumeBar.height + 8, FlxG.fullscreen ? "WINDOWED" : "FULLSCREEN", clickFullscreen);
 		fullscreenButton.screenCenter(FlxAxes.X);
 		add(fullscreenButton);
 		#end
@@ -91,7 +91,7 @@ class OptionsState extends FlxState {
 	#if desktop
 	function clickFullscreen() {
 		FlxG.fullscreen = !FlxG.fullscreen;
-		fullscreenButton.text = FlxG.fullscreen ? "FULLSCREEN" : "WINDOWED";
+		fullscreenButton.text = FlxG.fullscreen ? "WINDOWED" : "FULLSCREEN";
 		save.data.fullscreen = FlxG.fullscreen;
 	}
 	#end
