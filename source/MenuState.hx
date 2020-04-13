@@ -10,6 +10,10 @@ class MenuState extends FlxState {
 	var titleText:FlxText;
 	var optionsButton:FlxButton;
 
+	#if desktop
+	var exitButton:FlxButton;
+	#end
+
 	override public function create() {
 		titleText = new FlxText(20, 0, 0, "HaxeFlixel\nTutorial\nGame", 22);
 		titleText.alignment = CENTER;
@@ -27,6 +31,12 @@ class MenuState extends FlxState {
 		optionsButton.x = (FlxG.width / 2) + 10;
 		optionsButton.y = FlxG.height - optionsButton.height - 10;
 		add(optionsButton);
+
+		#if desktop
+		exitButton = new FlxButton(FlxG.width - 28, 8, "X", clickExit);
+		exitButton.loadGraphic(AssetPaths.button__png, true, 20, 20);
+		add(exitButton);
+		#end
 
 		if (FlxG.sound.music == null) // don't restart the music if it's already playing
 		{
@@ -46,4 +56,10 @@ class MenuState extends FlxState {
 	function clickOptions() {
 		FlxG.switchState(new OptionsState());
 	}
+
+	#if desktop
+	function clickExit() {
+		Sys.exit(0);
+	}
+	#end
 }
