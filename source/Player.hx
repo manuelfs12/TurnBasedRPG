@@ -1,5 +1,6 @@
 package;
 
+import flixel.system.FlxSound;
 import flixel.FlxObject;
 import flixel.math.FlxPoint;
 import flixel.FlxG;
@@ -8,6 +9,8 @@ import flixel.FlxSprite;
 
 class Player extends FlxSprite {
 	static inline var SPEED:Float = 100;
+
+	var stepSound:FlxSound;
 
 	public function new(x:Float = 0, y:Float = 0) {
 		super(x, y);
@@ -20,6 +23,7 @@ class Player extends FlxSprite {
 		drag.x = drag.y = 1600;
 		setSize(8, 8);
 		offset.set(4, 4);
+		stepSound = FlxG.sound.load(AssetPaths.step__wav);
 	}
 
 	function updateMovement() {
@@ -68,6 +72,7 @@ class Player extends FlxSprite {
 
 		// if the player is moving (velocity is not 0 for either axis), we need to change the animation to match their facing
 		if ((velocity.x != 0 || velocity.y != 0) && touching == FlxObject.NONE) {
+			stepSound.play();
 			switch (facing) {
 				case FlxObject.LEFT, FlxObject.RIGHT:
 					animation.play("lr");
