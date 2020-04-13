@@ -17,7 +17,7 @@ class Main extends Sprite {
 		#end
 
 		super();
-		addChild(new FlxGame(320, 240, MenuState, 1, 60, 60, false, startFullscreen));
+		addChild(new FlxGame(320, 240, MenuState, 1, 60, 60, true, startFullscreen));
 
 		if (save.data.volume != null) {
 			FlxG.sound.volume = save.data.volume;
